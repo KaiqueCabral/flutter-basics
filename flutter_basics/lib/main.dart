@@ -16,6 +16,8 @@ class App extends StatelessWidget {
         primarySwatch: Colors.green,
         focusColor: Colors.white,
         cursorColor: Colors.white,
+        backgroundColor: Colors.red[100],
+        fontFamily: "Arial",
       ),
       home: HomePage(),
     );
@@ -47,6 +49,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       widget.items.add(
         Item(
+          id: widget.items != null ? widget.items.length + 1 : 0,
           title: newTaskControl.text,
           done: false,
         ),
@@ -109,7 +112,7 @@ class _HomePageState extends State<HomePage> {
           FlatButton(
             child: Tooltip(
               message: "Click here to add a task",
-              showDuration: Duration(seconds: 2),
+              showDuration: Duration(seconds: 3),
               child: Icon(
                 Icons.add,
                 color: Colors.white,
@@ -124,13 +127,13 @@ class _HomePageState extends State<HomePage> {
         itemBuilder: (BuildContext context, int index) {
           final item = widget.items[index];
           return Dismissible(
-            key: Key(item.title),
+            key: Key(item.id.toString()),
             background: Container(
               color: Colors.red[100],
             ),
             child: CheckboxListTile(
               title: Text(item.title),
-              key: Key(item.title),
+              key: Key(item.id.toString()),
               value: item.done,
               onChanged: (value) {
                 setState(() {
