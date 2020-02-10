@@ -36,11 +36,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TextEditingController newTaskControl = TextEditingController();
+  IconData _icon = Icons.add;
   FocusNode _focusNode = FocusNode(
     canRequestFocus: true,
   );
 
   add() {
+    _icon = Icons.add;
     if (newTaskControl.text.isEmpty) {
       FocusScope.of(context).requestFocus(_focusNode);
       return;
@@ -67,6 +69,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future load() async {
+    _focusNode.addListener(() {
+      setState(() {
+        if (_focusNode.hasFocus) {
+          _icon = Icons.save;
+        } else {
+          _icon = Icons.add;
+        }
+      });
+    });
+
     var preferences = await SharedPreferences.getInstance();
     var data = preferences.getString("data");
 
@@ -111,10 +123,12 @@ class _HomePageState extends State<HomePage> {
         actions: <Widget>[
           FlatButton(
             child: Tooltip(
-              message: "Click here to add a task",
+              message: (_icon == Icons.save
+                  ? "Click here to SAVE the task"
+                  : "Click here to ADD a task"),
               showDuration: Duration(seconds: 3),
               child: Icon(
-                Icons.add,
+                _icon,
                 color: Colors.white,
               ),
             ),
