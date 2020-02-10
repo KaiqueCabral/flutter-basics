@@ -10,9 +10,12 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      showSemanticsDebugger: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
+        focusColor: Colors.white,
+        cursorColor: Colors.white,
       ),
       home: HomePage(),
     );
@@ -31,9 +34,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TextEditingController newTaskControl = TextEditingController();
+  FocusNode _focusNode = FocusNode(
+    canRequestFocus: true,
+  );
 
   add() {
-    if (newTaskControl.text.isEmpty) return;
+    if (newTaskControl.text.isEmpty) {
+      FocusScope.of(context).requestFocus(_focusNode);
+      return;
+    }
 
     setState(() {
       widget.items.add(
@@ -82,6 +91,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: TextFormField(
           controller: newTaskControl,
+          focusNode: _focusNode,
           keyboardType: TextInputType.text,
           style: TextStyle(
             color: Colors.white,
@@ -89,11 +99,25 @@ class _HomePageState extends State<HomePage> {
           ),
           decoration: InputDecoration(
             labelText: "New Task",
+            focusColor: Colors.white,
             labelStyle: TextStyle(
               color: Colors.white,
             ),
           ),
         ),
+        actions: <Widget>[
+          FlatButton(
+            child: Tooltip(
+              message: "Click here to add a task",
+              showDuration: Duration(seconds: 2),
+              child: Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+            ),
+            onPressed: add,
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: widget.items.length,
@@ -120,11 +144,6 @@ class _HomePageState extends State<HomePage> {
             },
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        backgroundColor: Colors.green,
-        onPressed: add,
       ),
     );
   }
