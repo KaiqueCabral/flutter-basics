@@ -11,7 +11,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       showSemanticsDebugger: false,
-      title: 'Flutter Demo',
+      title: 'Flutter - ToDo List',
       theme: ThemeData(
         primarySwatch: Colors.green,
         focusColor: Colors.white,
