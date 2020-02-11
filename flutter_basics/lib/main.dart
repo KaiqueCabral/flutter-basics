@@ -35,6 +35,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _totalItems = 0;
   TextEditingController newTaskControl = TextEditingController();
   IconData _icon = Icons.add;
   FocusNode _focusNode = FocusNode(
@@ -49,9 +50,10 @@ class _HomePageState extends State<HomePage> {
     }
 
     setState(() {
+      _totalItems++;
       widget.items.add(
         Item(
-          id: widget.items != null ? widget.items.length + 1 : 0,
+          id: widget.items != null ? _totalItems : 0,
           title: newTaskControl.text,
           done: false,
         ),
@@ -136,32 +138,45 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: widget.items.length,
-        itemBuilder: (BuildContext context, int index) {
-          final item = widget.items[index];
-          return Dismissible(
-            key: Key(item.id.toString()),
-            background: Container(
-              color: Colors.red[100],
-            ),
-            child: CheckboxListTile(
-              title: Text(item.title),
-              key: Key(item.id.toString()),
-              value: item.done,
-              onChanged: (value) {
-                setState(() {
-                  item.done = value;
-                  save();
-                });
+      body: widget.items.length == 0
+          ? Center(
+              child: Text(
+                "There are no tasks to show.\n" +
+                    "Click on the Plus Icon to add a task.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
+          : ListView.builder(
+              itemCount: widget.items.length,
+              itemBuilder: (BuildContext context, int index) {
+                final item = widget.items[index];
+                return Dismissible(
+                  key: Key(item.id.toString()),
+                  background: Container(
+                    color: Colors.red[100],
+                  ),
+                  child: CheckboxListTile(
+                    title: Text(item.title),
+                    subtitle: Text(item.id.toString()),
+                    key: Key(item.id.toString()),
+                    value: item.done,
+                    onChanged: (value) {
+                      setState(() {
+                        item.done = value;
+                        save();
+                      });
+                    },
+                  ),
+                  onDismissed: (DismissDirection direction) {
+                    remove(index);
+                  },
+                );
               },
             ),
-            onDismissed: (DismissDirection direction) {
-              remove(index);
-            },
-          );
-        },
-      ),
     );
   }
 }
